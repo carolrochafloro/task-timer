@@ -3,9 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# sensitive data
+# App secrets
 secrets.json
 
+# Migrations
+Migrations/
 
 # User-specific files
 *.rsuser

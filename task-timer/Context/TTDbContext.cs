@@ -11,6 +11,9 @@ namespace task_timer.Context
 
         }
 
+        public DbSet<AppUser> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<AppTask> Tasks { get; set; }
 
     }
 }
