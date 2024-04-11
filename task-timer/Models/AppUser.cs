@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace task_timer.Models;
@@ -22,6 +23,9 @@ public class AppUser
 
     [Required]
     [MaxLength(200)]
-    public string Password { get; set; }    
+    public string Password { get; set; }
+
+    [Required]
+    public string Salt { get; set; }
 
 }
