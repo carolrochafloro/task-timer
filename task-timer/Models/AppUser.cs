@@ -22,10 +22,6 @@ public class AppUser
     public string Email { get; set; }
 
     [Required]
-    [MaxLength(200)]
     public string Password { get; set; }
-
-    [Required]
-    public string Salt { get; set; }
 
 }
