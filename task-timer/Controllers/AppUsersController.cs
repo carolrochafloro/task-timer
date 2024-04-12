@@ -23,28 +23,28 @@ public class AppUsersController : ControllerBase
 
      // Create user
     [HttpPost]
-    public ActionResult Post(AppUser user)
+    public async Task<ActionResult<AppUser>> Post(AppUser user)
     {
-        try
+
+        if (user is null)
         {
-            if (user is null)
-            {
-                return BadRequest("All data must be provided.");
-            }
+            return BadRequest("All data must be provided.");
+        }
 
             // Using bcrypt to hash the password
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok("User registered.");
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error.");
-        }
-;
+
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult> PostLogin()
+    {
+        return Ok();
     }
 
 
