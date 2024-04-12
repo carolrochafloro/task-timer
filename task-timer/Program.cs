@@ -1,9 +1,17 @@
-// Create builder
 
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+// Enable OpenAPI
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
 
 // Add user secrets and build connection string
 
@@ -20,8 +28,7 @@ string? username = builder.Configuration["database:username"];
 string? password = builder.Configuration["database:password"];
 
 
-string connectionString = $"Host={host};Port={port};Database={database};" +
-                          $"Username={username};Password={password}";
+string connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
 
 // Use connection string and register the dbcontext in the DI container
 builder.Services.AddDbContext<TTDbContext>(options =>
@@ -29,16 +36,18 @@ builder.Services.AddDbContext<TTDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-// Add services to the container
-
-builder.Services.AddControllers();
-
-// Enable OpenAPI
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
