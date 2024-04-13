@@ -4,6 +4,10 @@ using task_timer.Context;
 using task_timer.Models;
 using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace task_timer.Controllers;
 
@@ -17,12 +21,16 @@ public class AppUsersController : ControllerBase
     // decoupled from specific database technologies.
 
     private readonly TTDbContext _context;
-    public AppUsersController(TTDbContext context)
+
+    private readonly IConfiguration _configuration;
+    public AppUsersController(TTDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+
     }
 
-     // Create user
+    // Create user
     [HttpPost]
     public async Task<IActionResult> PostUserAsync(AppUser user)
     {
@@ -32,13 +40,13 @@ public class AppUsersController : ControllerBase
             return BadRequest("All data must be provided.");
         }
 
-            // Using bcrypt to hash the password
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        // Using bcrypt to hash the password
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-            _context.Add(user);
-            await _context.SaveChangesAsync();
+        _context.Add(user);
+        await _context.SaveChangesAsync();
 
-            return Ok("User registered.");
+        return Ok("User registered.");
 
     }
 
@@ -62,9 +70,25 @@ public class AppUsersController : ControllerBase
             return Unauthorized("User or password are invalid.");
         }
 
-        // jwt
+        // Definir os claims do token
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+};
 
-        return Ok("Login successful.");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtSettings:secretKey"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["jwtSettings:issuer"],
+                audience: _configuration["jwtSettings:audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
+
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+
     }
 
 
