@@ -1,7 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
+
+// Enable JWT
+
+string issuer = "";
+string audience = "";
+string secretKey = "";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["jwtSettings:issuer"],
+            //ValidAudience = builder.Configuration["jwtSettings:audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwtSettings:secretKey"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Add user secrets and build connection string
 
@@ -46,6 +73,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Using JWT
+app.UseAuthentication();
 
 app.UseAuthorization();
 

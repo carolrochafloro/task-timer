@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using task_timer.Context;
 using task_timer.Models;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace task_timer.Controllers;
 
@@ -23,7 +24,7 @@ public class AppUsersController : ControllerBase
 
      // Create user
     [HttpPost]
-    public async Task<ActionResult<AppUser>> Post(AppUser user)
+    public async Task<IActionResult> PostUserAsync(AppUser user)
     {
 
         if (user is null)
@@ -42,9 +43,28 @@ public class AppUsersController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> PostLogin()
+    public async Task<IActionResult> PostLoginAsync(string email, string password)
     {
-        return Ok();
+        // find user by email
+        // compare password with bcrypt
+        // generate token
+
+        var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        if (user is null)
+        {
+            return Unauthorized("User or password are invalid.");
+        }
+
+        bool validation = BCrypt.Net.BCrypt.Verify(password, user.Password);
+
+        if (!validation)
+        {
+            return Unauthorized("User or password are invalid.");
+        }
+
+        // jwt
+
+        return Ok("Login successful.");
     }
 
 
