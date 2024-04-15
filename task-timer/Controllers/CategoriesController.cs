@@ -90,4 +90,25 @@ public class CategoriesController : ControllerBase
         return Ok($"{dbCategory.Name} has been updated.");
     }
 
+    [HttpDelete("{id:int:min(10)}")]
+    public async Task<ActionResult> Delete([FromRoute] int id)
+    {
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (category is null)
+        {
+            return NotFound("The category you're trying to delete doesn't exist.");
+        }
+
+        if (category.Tasks.Any())
+        {
+            return BadRequest($"{category.Name} cannot be deleted because it's associated with existing tasks.");
+        }
+
+        _context.Remove(category);
+        await _context.SaveChangesAsync();
+
+        return Ok($"{category.Name} was successfully deleted.");
+
+    }
 }
