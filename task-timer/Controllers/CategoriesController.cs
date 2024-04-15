@@ -27,6 +27,19 @@ public class CategoriesController : ControllerBase
         return categories;
     }
 
+    [HttpGet("{id:int:min(1)}", Name = "GetCategory")]
+    public async Task<ActionResult<Category>> Get(int id)
+    {
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (category == null)
+        {
+            return NotFound("The category doesn't exist.");
+        }
+
+        return Ok(category);
+    }
+
     [HttpPost]
     public async Task<ActionResult> Post(Category category)
     {
@@ -53,6 +66,28 @@ public class CategoriesController : ControllerBase
         {
             return BadRequest("Internal server error.");
         }
+    }
+
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<ActionResult> Put([FromRoute] int id, [FromBody] Category category)
+    {
+        if (category is null)
+        {
+            return BadRequest("All data must be provided.");
+        }
+
+        var dbCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (dbCategory is null)
+        {
+            return BadRequest($"Could not find category {id}");
+        }
+
+        _context.Entry(dbCategory).CurrentValues.SetValues(category);
+
+        await _context.SaveChangesAsync();
+
+        return Ok($"{dbCategory.Name} has been updated.");
     }
 
 }
