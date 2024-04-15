@@ -24,6 +24,7 @@ public class Category
 
     [JsonIgnore]
     public AppUser User { get; set; }
+    public List<Category> Categories { get; set;}
 
 
 }
