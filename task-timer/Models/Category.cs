@@ -24,7 +24,12 @@ public class Category
 
     [JsonIgnore]
     public AppUser User { get; set; }
-    public List<Category> Categories { get; set;}
+    public List<Task> Tasks { get; set; }
+
+    public Category()
+    {
+       Tasks = new List<Task>();
+    }
 
 
 }
