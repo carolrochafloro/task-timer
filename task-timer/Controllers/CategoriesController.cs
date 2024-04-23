@@ -100,7 +100,7 @@ public class CategoriesController : ControllerBase
             return NotFound("The category you're trying to delete doesn't exist.");
         }
 
-        if (category.Tasks.Any())
+        if (category.appTasks.Any())
         {
             return BadRequest($"{category.Name} cannot be deleted because it's associated with existing tasks.");
         }

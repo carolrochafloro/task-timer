@@ -6,6 +6,7 @@ namespace task_timer.Models;
 
 public class AppTask
 {
+    [Key]
     public int Id { get; set; }
 
     [Required]
@@ -19,7 +20,6 @@ public class AppTask
     [Timestamp]
     public DateTime Beginning { get; set; }
 
-    [Required]
     [Timestamp]
     public DateTime End { get; set; }
 
@@ -37,7 +37,5 @@ public class AppTask
 
     [JsonIgnore]
     public Category Category { get; set; }
-
-
 
 }

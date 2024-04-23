@@ -7,6 +7,7 @@ namespace task_timer.Models;
 [Table("Users")]
 public class AppUser
 {
+    [Key]
     public int Id { get; set; }
 
     [Required]

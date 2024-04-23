@@ -6,6 +6,7 @@ namespace task_timer.Models;
 
 public class Category
 {
+    [Key]
     public int Id { get; set; }
 
     [Required]
@@ -23,13 +24,14 @@ public class Category
     public int UserId { get; set; }
 
     [JsonIgnore]
-    public AppUser User { get; set; }
-    public List<Task> Tasks { get; set; }
+    public List<AppUser> appUsers { get; set; }
 
+    [JsonIgnore]
+    public List<AppTask> appTasks { get; set; }
     public Category()
     {
-       Tasks = new List<Task>();
+        appUsers = new List<AppUser>();
+        appTasks = new List<AppTask>();
     }
-
 
 }
