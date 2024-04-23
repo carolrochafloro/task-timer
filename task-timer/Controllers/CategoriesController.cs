@@ -43,12 +43,12 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Post(Category category)
     {
-        var dbCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category.Name);
-
         if (category is null)
         {
             return BadRequest("All data must be provided.");
         }
+
+        var dbCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category.Name);
 
         if (dbCategory != null)
         {
@@ -90,7 +90,7 @@ public class CategoriesController : ControllerBase
         return Ok($"{dbCategory.Name} has been updated.");
     }
 
-    [HttpDelete("{id:int:min(10)}")]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<ActionResult> Delete([FromRoute] int id)
     {
         var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
