@@ -49,19 +49,10 @@ public class AppUsersController : ControllerBase
         // Using bcrypt to hash the password
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-        try
-        {
-            _context.Add(user);
-            await _context.SaveChangesAsync();
+        _context.Add(user);
+        await _context.SaveChangesAsync();
 
-            return Ok("User registered.");
-        }
-        catch (Exception)
-        {
-
-            return BadRequest("Internal server error.");
-        }
-
+        return Ok("User registered.");
 
     }
 
@@ -74,45 +65,36 @@ public class AppUsersController : ControllerBase
 
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
-        try
+        if (user is null)
         {
-            if (user is null)
-            {
-                return Unauthorized("User or password are invalid.");
-            }
+            return Unauthorized("User or password are invalid.");
+        }
 
-            bool validation = BCrypt.Net.BCrypt.Verify(password, user.Password);
+        bool validation = BCrypt.Net.BCrypt.Verify(password, user.Password);
 
-            if (!validation)
-            {
-                return Unauthorized("User or password are invalid.");
-            }
+        if (!validation)
+        {
+            return Unauthorized("User or password are invalid.");
+        }
 
-            // Definir os claims do token
-            var claims = new[]
-            {
+        // Definir os claims do token
+        var claims = new[]
+        {
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtSettings:secretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtSettings:secretKey"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["jwtSettings:issuer"],
-                audience: _configuration["jwtSettings:audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
+        var token = new JwtSecurityToken(
+            issuer: _configuration["jwtSettings:issuer"],
+            audience: _configuration["jwtSettings:audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: creds);
 
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-        }
-        catch (Exception)
-        {
-
-            return BadRequest("Internal server error.");
-        }
-
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
 
     }
 
@@ -127,18 +109,11 @@ public class AppUsersController : ControllerBase
 
         var previousUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == user.Email);
 
-        try
-        {
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            _context.Add(user);
-            await _context.SaveChangesAsync();
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        _context.Add(user);
+        await _context.SaveChangesAsync();
 
-            return Ok("User data has been successfully updated.");
-        }
-        catch (Exception)
-        {
-            return BadRequest("Internal server error.");
-        }
+        return Ok("User data has been successfully updated.");
 
     }
 }

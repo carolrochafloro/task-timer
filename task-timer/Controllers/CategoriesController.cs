@@ -55,17 +55,10 @@ public class CategoriesController : ControllerBase
             return BadRequest("This category already exists.");
         }
 
-        try
-        {
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
-            return Ok(category);
-        }
+        await _context.Categories.AddAsync(category);
+        await _context.SaveChangesAsync();
+        return Ok(category);
 
-        catch (Exception)
-        {
-            return BadRequest("Internal server error.");
-        }
     }
 
     [HttpPut("{id:int:min(1)}")]
