@@ -4,11 +4,20 @@ using task_timer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using task_timer.Filters;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers( options =>
+{
+    options.Filters.Add(typeof(ApiExceptionFilter));
+
+}).AddJsonOptions( options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // Enable OpenAPI
 
