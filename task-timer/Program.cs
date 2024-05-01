@@ -11,14 +11,15 @@ using task_timer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers( options =>
+builder.Services.AddControllers(options =>
 {
     options.Filters.Add(typeof(ApiExceptionFilter));
 
-}).AddJsonOptions( options =>
+}).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
 
 // Enable OpenAPI
 
@@ -73,11 +74,11 @@ builder.Services.AddDbContext<TTDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-// 
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 

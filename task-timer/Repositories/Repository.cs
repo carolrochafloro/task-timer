@@ -21,9 +21,9 @@ public class Repository<T> : IRepository<T> where T : class
         return await _context.Set<T>().AsNoTracking().ToListAsync();
     }
 
-    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
+    public T? Get(Expression<Func<T, bool>> predicate)
     {
-        return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+        return _context.Set<T>().FirstOrDefault(predicate);
     }
 
     public async Task<T> CreateAsync(T entity)
@@ -32,13 +32,13 @@ public class Repository<T> : IRepository<T> where T : class
         return entity;
     }
 
-    public async Task<T> UpdateAsync(T entity)
+    public T UpdateAsync(T entity)
     {
         _context.Set<T>().Update(entity);
         return entity;
     }
 
-    public async Task<T> DeleteAsync(T entity)
+    public T DeleteAsync(T entity)
     {
         _context.Set<T>().Remove(entity);
         return entity;
