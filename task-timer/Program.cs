@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using task_timer.Filters;
 using System.Text.Json.Serialization;
+using task_timer.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +72,13 @@ builder.Services.AddDbContext<TTDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
+
+// 
+
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<ITasksRepository, TasksRepository>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 var app = builder.Build();

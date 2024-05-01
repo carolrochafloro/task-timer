@@ -9,4 +9,5 @@ public interface IUnitOfWork
     ITasksRepository TasksRepository { get; }
     ICategoriesRepository CategoriesRepository { get; } 
     void CommitAsync();
+
 }
