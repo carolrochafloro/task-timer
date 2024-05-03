@@ -8,6 +8,6 @@ public interface IUnitOfWork
     IUsersRepository UsersRepository { get; }
     ITasksRepository TasksRepository { get; }
     ICategoriesRepository CategoriesRepository { get; } 
-    void CommitAsync();
+    Task CommitAsync();
 
 }
