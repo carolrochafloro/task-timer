@@ -19,12 +19,12 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> Get()
+    public ActionResult<IEnumerable<Category>> Get()
     {
         // get authentication and authorization to allow the user to 
         // only access the categories he created
 
-        var categories = await _unitOfWork.CategoriesRepository.GetAllAsync();
+        var categories = _unitOfWork.CategoriesRepository.GetAllAsync();
         return Ok(categories);
     }
 
