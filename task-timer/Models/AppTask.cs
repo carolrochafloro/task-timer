@@ -11,16 +11,13 @@ public class AppTask
 
     [Required]
     [StringLength(100)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [StringLength(400)]
-    public string Obs { get; set; }
+    public string? Obs { get; set; }
 
-    [Required]
-    [Timestamp]
     public DateTime Beginning { get; set; }
 
-    [Timestamp]
     public DateTime End { get; set; }
 
     [Required]
@@ -33,9 +30,9 @@ public class AppTask
 
     // The navigation properties will not be serialized
     [JsonIgnore]
-    public AppUser User { get; set; }
+    public AppUser? User { get; set; }
 
     [JsonIgnore]
-    public Category Category { get; set; }
+    public Category? Category { get; set; }
 
 }
