@@ -23,14 +23,11 @@ public class Category
     [ForeignKey("Id")]
     public int UserId { get; set; }
 
-    [JsonIgnore]
-    public List<AppUser> appUsers { get; set; }
 
     [JsonIgnore]
     public List<AppTask> appTasks { get; set; }
     public Category()
     {
-        appUsers = new List<AppUser>();
         appTasks = new List<AppTask>();
     }
 
