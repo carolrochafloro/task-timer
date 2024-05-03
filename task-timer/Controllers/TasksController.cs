@@ -5,6 +5,7 @@ using task_timer.Models;
 using Npgsql.NodaTime;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using task_timer.Repositories;
 
 namespace task_timer.Controllers;
 
@@ -12,78 +13,48 @@ namespace task_timer.Controllers;
 [ApiController]
 public class TasksController : ControllerBase
 {
-    private readonly TTDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TasksController(TTDbContext context)
+    public TasksController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
-
-    // User needs to be authenticated
 
     [HttpGet]
     public ActionResult<IEnumerable<AppTask>> Get()
     {
+        var tasks = _unitOfWork.TasksRepository.GetAllAsync();
 
-        var tasks = _context.Tasks.ToList();
+        return Ok(tasks);
+    }
 
-        return tasks;
+    [HttpGet("{id:int:min(1)}")]
+    public ActionResult<IEnumerable<AppTask>> Get(int id)
+    {
+        var taskById = _unitOfWork.TasksRepository.Get(t => t.Id == id);
+
+        if (taskById is null) {
+            return BadRequest("This task doesn't exist.");
+        }
+
+        return Ok(taskById);
     }
 
     // post - manually logged task
-    [HttpPost("/Manual")]
-    public ActionResult PostManual([FromBody] AppTask task)
+    [HttpPost]
+    public async Task<ActionResult> Post(AppTask appTask)
     {
-        if (task is null || task.End == default(DateTime))
+        if (appTask is null)
         {
             return BadRequest("All data must be provided.");
         }
 
-        var dbTask = _context.Tasks.FirstOrDefault(t => t.Beginning == task.Beginning);
+        // verify if userIs belongs to the logged user and if beginning is before end.
 
-        if (dbTask != null)
-        {
-            return BadRequest($"{dbTask.Name} starts at the same time.");
-        }
+        _unitOfWork.TasksRepository.CreateAsync(appTask);
+        await _unitOfWork.CommitAsync();
 
-        _context.Tasks.Add(task);
-        _context.SaveChangesAsync();
-
-        return Ok($"Task {task.Name} was successfully created.");
+        return Ok($"Task {appTask.Name} was successfully created.");
     }
-
-    // post - timer task (start)
-
-    [HttpPost("/Start")]
-    public async Task<ActionResult> Post(AppTask task)
-    {
-        // creates a new task and initiates it
-
-        if (task is null)
-        {
-            return BadRequest("All data must me provided.");
-        }
-
-        var dbTask = await _context.Tasks.FirstOrDefaultAsync(t => t.Beginning == task.Beginning);
-
-        if (dbTask != null)
-        {
-            return BadRequest($"{dbTask.Name} starts at the same time.");
-        }
-
-        await _context.Tasks.AddAsync(task);
-        await _context.SaveChangesAsync();
-        return Ok();
-
-    }
-
-    [HttpPut("/End/{id:int:min(1)}")]
-    public async Task<ActionResult> PutEnd([FromRoute] int id, [FromBody]AppTask task)
-    {
-        return Ok("");
-    }
-
-
-
 
 }

@@ -56,8 +56,8 @@ public class CategoriesController : ControllerBase
             return BadRequest("This category already exists.");
         }
 
-        await _unitOfWork.CategoriesRepository.CreateAsync(category);
-        _unitOfWork.CommitAsync();
+        _unitOfWork.CategoriesRepository.CreateAsync(category);
+        await _unitOfWork.CommitAsync();
         return Ok($"Created:\nName: {category.Name}\nDescription: {category.Description}");
 
     }
@@ -86,7 +86,7 @@ public class CategoriesController : ControllerBase
         dbCategory.UserId = category.UserId;
 
         _unitOfWork.CategoriesRepository.UpdateAsync(dbCategory);
-        _unitOfWork.CommitAsync();
+        await _unitOfWork.CommitAsync();
 
         return Ok($"{dbCategory.Name} has been updated.");
     }
@@ -107,7 +107,7 @@ public class CategoriesController : ControllerBase
         }
 
         _unitOfWork.CategoriesRepository.DeleteAsync(category);
-        _unitOfWork.CommitAsync();
+        await _unitOfWork.CommitAsync();
 
         return Ok($"{category.Name} was successfully deleted.");
 

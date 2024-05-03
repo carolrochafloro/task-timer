@@ -42,7 +42,7 @@ public class AppUsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostUserAsync(AppUser user)
+    public async Task<ActionResult> PostUserAsync(AppUser user)
     {
 
         if (user is null)
@@ -60,23 +60,29 @@ public class AppUsersController : ControllerBase
         // Using bcrypt to hash the password
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-        await _unitOfWork.UsersRepository.CreateAsync(user);
+        _unitOfWork.UsersRepository.CreateAsync(user);
+        await _unitOfWork.CommitAsync();
 
         return Ok($"User {user.Email} registered.");
 
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> PutAsync(AppUser user)
+    public async Task<ActionResult> Put(int id, AppUser user)
     {
 
-        var previousUser = _unitOfWork.UsersRepository.Get(u => u.Email == user.Email);
+        var previousUser = _unitOfWork.UsersRepository.Get(u => u.Id == user.Id);
 
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-        _unitOfWork.UsersRepository.UpdateAsync(user);
+        previousUser.Email = user.Email;
+        previousUser.Name = user.Name;
+        previousUser.LastName = user.LastName;
+        previousUser.Password = user.Password;
 
-        _unitOfWork.CommitAsync();
+        _unitOfWork.UsersRepository.UpdateAsync(previousUser);
+
+        await _unitOfWork.CommitAsync();
 
         return Ok($"User {user.Email} has been successfully updated.");
 
