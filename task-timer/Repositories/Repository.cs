@@ -16,9 +16,9 @@ public class Repository<T> : IRepository<T> where T : class
         _context = context;
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public IEnumerable<T> GetAllAsync()
     {
-        return await _context.Set<T>().AsNoTracking().ToListAsync();
+        return _context.Set<T>().AsNoTracking().ToList();
     }
 
     public T? Get(Expression<Func<T, bool>> predicate)
@@ -43,5 +43,6 @@ public class Repository<T> : IRepository<T> where T : class
         _context.Set<T>().Remove(entity);
         return entity;
     }
+
 
 }
