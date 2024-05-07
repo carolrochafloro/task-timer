@@ -76,7 +76,7 @@ builder.Services.AddDbContext<TTDbContext>(options =>
 
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<ITasksRepository, TasksRepository>();
+builder.Services.AddScoped<IAppTasksRepository, AppTasksRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -6,7 +6,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private IUsersRepository _usersRepository;
 
-    private ITasksRepository _tasksRepository;
+    private IAppTasksRepository _tasksRepository;
 
     private ICategoriesRepository _categoriesRepository;
 
@@ -26,14 +26,14 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
-    public ITasksRepository TasksRepository
+    public IAppTasksRepository TasksRepository
     {
         get
         {
             // lazy loading: avoids unecessary instances checking if there's an instance
             // of the object before creating another one
 
-            return _tasksRepository = _tasksRepository ?? new TasksRepository(_context);
+            return _tasksRepository = _tasksRepository ?? new AppTasksRepository(_context);
         }
     }
 

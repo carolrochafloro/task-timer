@@ -11,11 +11,11 @@ namespace task_timer.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController : ControllerBase
+public class AppTasksController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public TasksController(IUnitOfWork unitOfWork)
+    public AppTasksController(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

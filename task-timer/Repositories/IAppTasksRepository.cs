@@ -2,6 +2,6 @@
 
 namespace task_timer.Repositories;
 
-public interface ITasksRepository : IRepository<AppTask>
+public interface IAppTasksRepository : IRepository<AppTask>
 {
 }
