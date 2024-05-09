@@ -103,4 +103,70 @@ public class AuthController : ControllerBase
         return Ok(new ResponseDTO { Status = "Success", Message = "User registered." });
 
     }
+
+    [HttpPost]
+    [Route("refresh-token")]
+    public async Task<IActionResult> RefreshToken(TokenModelDTO tokenModel)
+    {
+        if (tokenModel is null)
+        {
+            return BadRequest("Invalid client request.");
+
+        }
+        string? accessToken = tokenModel.AccessToken ??
+                              throw new ArgumentNullException(nameof(tokenModel));
+
+        string refreshToken = tokenModel.RefreshToken ??
+                              throw new ArgumentNullException(nameof(tokenModel));
+
+        var principal = _tokenService.GetPrincipalExpiredToken(accessToken!, _configuration);
+
+        if (principal == null)
+        {
+            return BadRequest("Invalid access token/refresh token.");
+        }
+
+        string userName = principal.Identity.Name;
+
+        var user = await _userManager.FindByNameAsync(userName);
+
+        if (user == null || user.RefreshToken != refreshToken ||
+            user.RefreshTokenEspiryTime <= DateTime.UtcNow)
+        {
+            return BadRequest("Invalid access token/refresh toekn.");
+        }
+
+        var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims.ToList(),
+                             _configuration);
+
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        await _userManager.UpdateAsync(user);
+
+        return new ObjectResult(new
+        {
+            accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+            refreshToken = newRefreshToken,
+        });
+    }
+
+    [HttpPost]
+    [Route("revoke/[username]")]
+
+    public async Task<IActionResult> Revoke(string userName)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+
+        if (user is null)
+        {
+            return BadRequest("Invalid user name.");
+        }
+
+        user.RefreshToken = null;
+
+        await _userManager.UpdateAsync(user);
+
+        return NoContent();
+    }
 }
