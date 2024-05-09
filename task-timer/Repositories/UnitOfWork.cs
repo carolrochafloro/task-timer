@@ -4,7 +4,6 @@ namespace task_timer.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private IUsersRepository _usersRepository;
 
     private IAppTasksRepository _tasksRepository;
 
@@ -15,15 +14,6 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(TTDbContext context)
     {
         _context = context;
-    }
-
-    public IUsersRepository UsersRepository
-    {
-        get
-
-        {
-            return _usersRepository = _usersRepository ?? new UsersRepository(_context);
-        }
     }
 
     public IAppTasksRepository TasksRepository

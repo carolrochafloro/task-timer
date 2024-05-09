@@ -5,7 +5,6 @@ namespace task_timer.Repositories;
 
 public interface IUnitOfWork
 {
-    IUsersRepository UsersRepository { get; }
     IAppTasksRepository TasksRepository { get; }
     ICategoriesRepository CategoriesRepository { get; } 
     Task CommitAsync();
