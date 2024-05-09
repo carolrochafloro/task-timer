@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using task_timer.Models;
+using task_timer.Serices;
+using task_timer.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,7 +78,7 @@ string? password = builder.Configuration["database:password"];
 
 
 string connectionString = $"Host={host};Port={port};Database={database};" +
-    $"                      Username={username};Password={password}";
+                          $"Username={username};Password={password}";
 
 // Use connection string and register the dbcontext in the DI container
 builder.Services.AddDbContext<TTDbContext>(options =>
@@ -88,6 +90,7 @@ builder.Services.AddScoped<IAppTasksRepository, AppTasksRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 
 var app = builder.Build();
