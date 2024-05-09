@@ -83,7 +83,7 @@ public class CategoriesController : ControllerBase
         dbCategory.ImgUrl = category.ImgUrl;
 
         // to do: get user id from header if possible
-        dbCategory.UserId = category.UserId;
+        dbCategory.AspNetUsersId = category.AspNetUsersId;
 
         _unitOfWork.CategoriesRepository.UpdateAsync(dbCategory);
         await _unitOfWork.CommitAsync();
