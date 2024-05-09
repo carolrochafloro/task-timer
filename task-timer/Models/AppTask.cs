@@ -22,17 +22,18 @@ public class AppTask
 
     [Required]
     [ForeignKey("Id")]
-    public int UserId { get; set; }
+    public string AspNetUsersId { get; set; }
 
     [Required]
     [ForeignKey("Id")]
     public int CategoryId { get; set; }
 
     // The navigation properties will not be serialized
-    [JsonIgnore]
-    public AppUser? User { get; set; }
 
     [JsonIgnore]
     public Category? Category { get; set; }
+
+    [JsonIgnore]
+    public AppUser? User { get; set; }
 
 }

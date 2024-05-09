@@ -21,7 +21,7 @@ public class Category
 
     [Required]
     [ForeignKey("Id")]
-    public int UserId { get; set; }
+    public string AspNetUsersId { get; set; }
 
 
     [JsonIgnore]
