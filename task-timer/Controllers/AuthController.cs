@@ -152,7 +152,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    [Route("revoke/[username]")]
+    [Route("revoke/{userName}")]
 
     public async Task<IActionResult> Revoke(string userName)
     {

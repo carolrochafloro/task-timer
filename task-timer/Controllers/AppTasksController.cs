@@ -6,11 +6,13 @@ using Npgsql.NodaTime;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using task_timer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace task_timer.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class AppTasksController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
