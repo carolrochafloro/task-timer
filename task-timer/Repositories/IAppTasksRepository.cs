@@ -4,4 +4,6 @@ namespace task_timer.Repositories;
 
 public interface IAppTasksRepository : IRepository<AppTask>
 {
+    public IEnumerable<AppTask> GetByUserId(string id);
+
 }

@@ -13,7 +13,6 @@ public class Category
     [MaxLength(200)]
     public string? Name { get; set; }
 
-    [Required]
     [MaxLength(400)]
     public string? Description { get; set; }
 

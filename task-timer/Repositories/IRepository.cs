@@ -10,6 +10,7 @@ public interface IRepository<T>
     // the returned object must satisfy. For example: (p => p.Id == idT).
 
     public T? Get(Expression<Func<T, bool>> predicate);
+
     public T CreateAsync(T entity);
     public T UpdateAsync(T entity);
     public T DeleteAsync(T entity);
