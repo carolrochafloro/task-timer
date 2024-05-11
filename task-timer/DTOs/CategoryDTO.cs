@@ -11,6 +11,4 @@ public class CategoryDTO
     [MaxLength(400)]
     public string? Description { get; set; }
 
-    public string? ImgUrl { get; set; }
-
 }
