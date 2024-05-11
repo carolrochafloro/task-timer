@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
@@ -14,20 +15,27 @@ namespace task_timer.Controllers;
 public class CategoriesController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UserManager<AppUser> _userManager;
 
-    public CategoriesController(IUnitOfWork unitOfWork)
+    public CategoriesController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager)
     {
         _unitOfWork = unitOfWork;
+        _userManager = userManager;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Category>> Get()
+    public ActionResult<IEnumerable<Category>> GetByUserId()
     {
-        // get authentication and authorization to allow the user to 
-        // only access the categories he created
+        var userId = _userManager.GetUserId(User);
 
-        var categories = _unitOfWork.CategoriesRepository.GetAllAsync();
+        if (userId == null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        var categories = _unitOfWork.CategoriesRepository.GetByUserId(userId);
         return Ok(categories);
+
     }
 
     [HttpGet("{id:int:min(1)}", Name = "GetCategory")]
