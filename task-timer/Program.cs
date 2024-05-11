@@ -63,6 +63,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Add user secrets and build connection string
 
 builder.Configuration.AddUserSecrets<Program>();
