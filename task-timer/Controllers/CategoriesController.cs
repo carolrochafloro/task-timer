@@ -109,11 +109,9 @@ public class CategoriesController : ControllerBase
 
         dbCategoryDTO.Name = category.Name;
         dbCategoryDTO.Description = category.Description;
-        dbCategoryDTO.ImgUrl = category.ImgUrl;
 
         var dbCategory = _mapper.Map<Category>(dbCategoryDTO);
 
-        // to do: get user id from header if possible
         dbCategory.AspNetUsersId = dbCategory.AspNetUsersId;
 
         _unitOfWork.CategoriesRepository.UpdateAsync(dbCategory);

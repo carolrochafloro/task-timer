@@ -16,8 +16,6 @@ public class Category
     [MaxLength(400)]
     public string? Description { get; set; }
 
-    public string? ImgUrl { get; set; }
-
     [Required]
     [ForeignKey("Id")]
     public string AspNetUsersId { get; set; }
