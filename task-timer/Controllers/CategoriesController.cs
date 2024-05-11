@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
+using task_timer.DTOs;
 using task_timer.Models;
 using task_timer.Repositories;
 
@@ -16,15 +18,18 @@ public class CategoriesController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IMapper _mapper;
 
-    public CategoriesController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager)
+    public CategoriesController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager,
+                                IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Category>> GetByUserId()
+    public ActionResult<IEnumerable<CategoryDTO>> GetByUserId()
     {
         var userId = _userManager.GetUserId(User);
 
@@ -34,66 +39,82 @@ public class CategoriesController : ControllerBase
         }
 
         var categories = _unitOfWork.CategoriesRepository.GetByUserId(userId);
-        return Ok(categories);
+        var categoriesDTO = _mapper.Map<List<CategoryDTO>>(categories);
+
+        return Ok(categoriesDTO);
 
     }
 
     [HttpGet("{id:int:min(1)}", Name = "GetCategory")]
-    public ActionResult<Category> Get(int id)
+    public ActionResult<CategoryDTO> Get(int id)
     {
+        var userId = _userManager.GetUserId(User);
         var category = _unitOfWork.CategoriesRepository.Get(c => c.Id == id);
-
+        
         if (category == null)
         {
             return NotFound("The category doesn't exist.");
         }
 
-        return Ok(category);
+        var categoryDTO = _mapper.Map<CategoryDTO>(category);
+
+        return Ok(categoryDTO);
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(Category category)
+    public async Task<ActionResult> Post(CategoryDTO categoryDTO)
     {
-        if (category is null)
+        if (categoryDTO is null)
         {
             return BadRequest("All data must be provided.");
         }
 
-        var dbCategory = _unitOfWork.CategoriesRepository.Get(c => c.Name == category.Name);
+        var dbCategory = _unitOfWork.CategoriesRepository.Get(c => c.Name == categoryDTO.Name);
        
         if (dbCategory != null)
         {
             return BadRequest("This category already exists.");
         }
 
+        var userId = _userManager.GetUserId(User);
+        var category = _mapper.Map<Category>(categoryDTO);
+
+        if (userId == null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        category.AspNetUsersId = userId;
+
         _unitOfWork.CategoriesRepository.CreateAsync(category);
         await _unitOfWork.CommitAsync();
-        return Ok($"Created:\nName: {category.Name}\nDescription: {category.Description}");
+        return Ok($"Created:\nName: {categoryDTO.Name}\nDescription: {categoryDTO.Description}");
 
     }
 
-    // fix - copy category properties to dbcategory and then pass it to the update method
     [HttpPut("{id:int:min(1)}")]
-    public async Task<ActionResult> Put([FromRoute] int id, [FromBody] Category category)
+    public async Task<ActionResult> Put([FromRoute] int id, [FromBody] CategoryDTO category)
     {
         if (category is null)
         {
             return BadRequest("All data must be provided.");
         }
 
-        var dbCategory = _unitOfWork.CategoriesRepository.Get(c => c.Id == id);
+        var dbCategoryDTO = _unitOfWork.CategoriesRepository.Get(c => c.Id == id);
 
-        if (dbCategory is null)
+        if (dbCategoryDTO is null)
         {
             return BadRequest($"Could not find category {id}");
         }
 
-        dbCategory.Name = category.Name;
-        dbCategory.Description = category.Description;
-        dbCategory.ImgUrl = category.ImgUrl;
+        dbCategoryDTO.Name = category.Name;
+        dbCategoryDTO.Description = category.Description;
+        dbCategoryDTO.ImgUrl = category.ImgUrl;
+
+        var dbCategory = _mapper.Map<Category>(dbCategoryDTO);
 
         // to do: get user id from header if possible
-        dbCategory.AspNetUsersId = category.AspNetUsersId;
+        dbCategory.AspNetUsersId = dbCategory.AspNetUsersId;
 
         _unitOfWork.CategoriesRepository.UpdateAsync(dbCategory);
         await _unitOfWork.CommitAsync();

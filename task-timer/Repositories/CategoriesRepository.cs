@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
+using task_timer.DTOs;
 using task_timer.Models;
 
 namespace task_timer.Repositories;
