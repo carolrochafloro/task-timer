@@ -27,11 +27,11 @@ public class AppTasksController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<AppTaskDTO>> GetByUserId(string id)
+    public ActionResult<IEnumerable<AppTaskDTO>> GetByUserId()
     {
         var user = _userManager.GetUserId(User);
 
-        var tasks = _unitOfWork.TasksRepository.GetByUserId(id);
+        var tasks = _unitOfWork.TasksRepository.GetByUserId(user);
         
         var tasksDTO = _mapper.Map<List<AppTaskDTO>>(tasks);
 

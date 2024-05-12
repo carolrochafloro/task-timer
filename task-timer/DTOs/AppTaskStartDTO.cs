@@ -5,10 +5,10 @@ namespace task_timer.DTOs;
 public class AppTaskStartDTO
 {
     [Required]
-    public string? Name;
+    public string? Name { get; set; }
 
-    public string? Obs;
+    public string? Obs { get; set; }
 
     [Required]
-    public int categoryId;
+    public int categoryId { get; set; }
 }
