@@ -61,7 +61,6 @@ public class AppTasksController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/insert")]
     public async Task<ActionResult> Post(AppTaskDTO appTaskDTO)
     {
         if (appTaskDTO is null)
@@ -93,7 +92,7 @@ public class AppTasksController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/start")]
+    [Route("api/[controller]/start")]
     public async Task<ActionResult> PostStart(AppTaskStartDTO appTaskStartDTO)
     {
         if (appTaskStartDTO is null)
@@ -121,7 +120,6 @@ public class AppTasksController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("/stop")]
     public async Task<ActionResult> PostStop(DateTime stop, int taskId)
     {
         var currentTask = _unitOfWork.TasksRepository.Get(t => t.Id == taskId);
