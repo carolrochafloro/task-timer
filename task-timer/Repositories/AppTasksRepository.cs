@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using task_timer.Context;
 using task_timer.Models;
@@ -16,4 +18,5 @@ public class AppTasksRepository : Repository<AppTask>, IAppTasksRepository
         return _context.Set<AppTask>().
                AsNoTracking().Where(t => t.AspNetUsersId == id).ToList();
     }
+
 }

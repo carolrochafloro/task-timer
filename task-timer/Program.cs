@@ -29,7 +29,6 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
 
 // Identity
 builder.Services.AddIdentity<AppUser, IdentityRole>().

@@ -8,6 +8,7 @@ public class AutoMappingDTO : Profile
     public AutoMappingDTO()
     {
         CreateMap<Category, CategoryDTO>().ReverseMap();
-        CreateMap<AppTask, AppTaskDTO>().ReverseMap();     
+        CreateMap<AppTask, AppTaskDTO>().ReverseMap();  
+        CreateMap<AppTask, AppTaskStartDTO>().ReverseMap(); 
     }
 }
