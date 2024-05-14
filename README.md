@@ -78,3 +78,9 @@ dotnet run
 
 9. **Acesse a API**: Agora a API deve estar rodando e pode ser acessada no navegador em `https://localhost:5432`. Será utilizada a SwaggerUI para acessar as rotas, fornecendo os schemas necessários.
 
+## Backlog
+- Testes unitários
+- Logging
+- Paginação de resultados
+- Swagger annotations 
+
