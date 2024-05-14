@@ -80,6 +80,14 @@ public class AppTasksController : ControllerBase
                               "earlier than the start time. Please enter a valid time.");
         }
 
+        var category = _unitOfWork.CategoriesRepository.
+               Get(c => c.Id == appTaskDTO.categoryId);
+
+        if (category is null || category.AspNetUsersId != userId)
+        {
+            return BadRequest("The category doesn't exist.");
+        }
+
         var appTask = _mapper.Map<AppTask>(appTaskDTO);
 
         appTask.AspNetUsersId = userId;
@@ -105,6 +113,14 @@ public class AppTasksController : ControllerBase
         if (userId is null)
         {
             return BadRequest("User not found.");
+        }
+
+        var category = _unitOfWork.CategoriesRepository.
+                       Get(c => c.Id == appTaskStartDTO.categoryId);
+
+        if (category is null || category.AspNetUsersId != userId) 
+        {
+            return BadRequest("The category doesn't exist.");
         }
 
         var startTask = _mapper.Map<AppTask>(appTaskStartDTO);
