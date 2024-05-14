@@ -27,19 +27,19 @@ public class AppTasksController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<AppTaskDTO>> GetByUserId()
+    public ActionResult<IEnumerable<AppTaskClientDTO>> GetByUserId()
     {
         var user = _userManager.GetUserId(User);
 
         var tasks = _unitOfWork.TasksRepository.GetByUserId(user);
         
-        var tasksDTO = _mapper.Map<List<AppTaskDTO>>(tasks);
+        var tasksDTO = _mapper.Map<List<AppTaskClientDTO>>(tasks);
 
         return Ok(tasksDTO);
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public ActionResult<IEnumerable<AppTaskDTO>> Get(int id)
+    public ActionResult<IEnumerable<AppTaskClientDTO>> Get(int id)
     {
         var userId = _userManager.GetUserId(User);
 
@@ -54,8 +54,7 @@ public class AppTasksController : ControllerBase
             return BadRequest("This task doesn't exist.");
         }
 
-        var taskDTO = _mapper.Map<AppTaskDTO>(taskById);
-
+        var taskDTO = _mapper.Map<AppTaskClientDTO>(taskById);
 
         return Ok(taskDTO);
     }
@@ -84,6 +83,7 @@ public class AppTasksController : ControllerBase
         var appTask = _mapper.Map<AppTask>(appTaskDTO);
 
         appTask.AspNetUsersId = userId;
+        appTask.Duration = appTask.End - appTask.Beginning;
 
         _unitOfWork.TasksRepository.CreateAsync(appTask);
         await _unitOfWork.CommitAsync();
@@ -136,6 +136,7 @@ public class AppTasksController : ControllerBase
         }
 
         currentTask.End = stop;
+        currentTask.Duration = stop - currentTask.Beginning;    
         await _unitOfWork.CommitAsync();
 
         return Ok($"{currentTask.Name} stopped at {currentTask.End}.");
