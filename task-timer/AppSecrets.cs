@@ -16,6 +16,25 @@
         string? TokenValidityInMinutes;
         string? RefreshTokenValidityInMinutes;
 
+        {
+  /*"database": {
+        "host": "",
+        "port": ,
+        "database": "",
+        "username": "",
+        "password": ""
+  },
+
+  "JWT": {
+        "ValidAudience": "",
+        "ValidIssuer": "",
+        "SecretKey": "",
+        "TokenValidityInMinutes": "",
+        "RefreshTokenValidityInMinutes": ""
+  }
+
+        }*/
+
 
     }
 }
