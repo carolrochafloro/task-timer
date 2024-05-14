@@ -32,7 +32,7 @@ public class AppTasksController : ControllerBase
         var user = _userManager.GetUserId(User);
 
         var tasks = _unitOfWork.TasksRepository.GetByUserId(user);
-        
+
         var tasksDTO = _mapper.Map<List<AppTaskClientDTO>>(tasks);
 
         return Ok(tasksDTO);
@@ -58,6 +58,61 @@ public class AppTasksController : ControllerBase
 
         return Ok(taskDTO);
     }
+
+    [HttpGet("getbycategory/{id:int:min(1)}")]
+    public ActionResult<IEnumerable<AppTaskClientDTO>> GetByCategory(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId == null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        var taskByCategory = _unitOfWork.TasksRepository.GetByCategoryId(id);
+
+        if (taskByCategory is null)
+        {
+            return BadRequest("There are no tasks related to this category.");
+        }
+
+        var tasksDTO = _mapper.Map<List<AppTaskClientDTO>>(taskByCategory);
+
+        return Ok(tasksDTO);
+    }
+
+    [HttpGet]
+    [Route("avgduration")]
+    public ActionResult<AppTaskAvgDurationDTO> GetAvgDuration(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId == null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        var taskByCategory = _unitOfWork.TasksRepository.GetByCategoryId(id);
+
+        if (taskByCategory is null)
+        {
+            return BadRequest("There are no tasks related to this category.");
+        }
+
+        var averageDuration = TimeSpan.FromTicks((long)taskByCategory.
+                              Average(t => t.Duration.Ticks));
+
+        var totalTasks = taskByCategory.Count();
+
+        var result = new AppTaskAvgDurationDTO
+        {
+            TotalTasks = totalTasks,
+            AvgDuration = averageDuration
+        };
+
+        return Ok(result);
+    }
+
 
     [HttpPost]
     public async Task<ActionResult> Post(AppTaskDTO appTaskDTO)

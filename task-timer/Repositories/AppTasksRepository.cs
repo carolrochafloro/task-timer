@@ -13,6 +13,12 @@ public class AppTasksRepository : Repository<AppTask>, IAppTasksRepository
     {
     }
 
+    public IEnumerable<AppTask> GetByCategoryId(int id)
+    {
+        return _context.Set<AppTask>().AsNoTracking().
+               Where(t => t.CategoryId == id).ToList();
+    }
+
     public IEnumerable<AppTask> GetByUserId(string id)
     {
         return _context.Set<AppTask>().
