@@ -20,6 +20,9 @@ public class AppTask
 
     public DateTime End { get; set; }
 
+    public TimeSpan Duration { get; set; }
+
+  
     [Required]
     [ForeignKey("Id")]
     public string AspNetUsersId { get; set; }
